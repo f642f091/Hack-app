@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
 
 # dependencies
@@ -36,3 +37,6 @@ yarn-error.*
 *.tsbuildinfo
 
 app-example
+=======
+backend/venv/
+>>>>>>> 3c8b775 (Initial project structure with backend and frontend folders)
