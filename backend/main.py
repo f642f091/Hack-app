@@ -1,10 +1,23 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from typing import Optional
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.encoders import jsonable_encoder
+
 
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Or set specific IPs like ["http://192.168.1.123:8081"]
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 logs = []
+
+
 
 class SymptomLog(BaseModel):
     pain: int
@@ -28,5 +41,6 @@ def get_summary():
     return {
         "average_pain": round(avg_pain, 2),
         "average_nausea": round(avg_nausea, 2),
-        "logs": logs
+        "logs": jsonable_encoder(logs)  # 👈 Safe serialization
     }
+
