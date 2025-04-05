@@ -1,27 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  ScrollView,
-  ActivityIndicator,
-  StyleSheet,
-} from 'react-native';
-import { BarChart, Grid } from 'react-native-svg-charts';
-import * as shape from 'd3-shape';
+import React, { useState, useEffect } from 'react';
+import { View, Text, ScrollView, ActivityIndicator, StyleSheet, Image } from 'react-native';
 
 const DashboardScreen = () => {
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('http://172.16.58.176:8000/summary')
-      .then((response) => response.json())
+    fetch('http://10.104.238.249:8000/summary') // 👈 Update with current IP
+      .then((res) => res.json())
       .then((data) => {
         setLogs(data.logs || []);
         setLoading(false);
       })
-      .catch((error) => {
-        console.error('Error fetching logs:', error);
+      .catch((err) => {
+        console.error('Error fetching summary:', err);
         setLoading(false);
       });
   }, []);
@@ -31,20 +23,51 @@ const DashboardScreen = () => {
   }
 
   const totalLogs = logs.length;
-  const avgPain =
-    logs.reduce((sum, log) => sum + (log.pain || 0), 0) / (totalLogs || 1);
+  const avgPain = logs.reduce((sum, log) => sum + (log.pain || 0), 0) / (totalLogs || 1);
 
-  const recentSymptoms = {};
+  const symptomTotals = {
+    pain: 0,
+    nausea: 0,
+    fatigue: 0,
+    diarrhea: 0,
+    appetite_loss: 0,
+    weight_change: 0,
+    blood_in_stool: 0,
+    stress_level: 0,
+  };
+
   logs.forEach((log) => {
-    if (log.notes) {
-      const note = log.notes.trim();
-      recentSymptoms[note] = (recentSymptoms[note] || 0) + 1;
-    }
+    Object.keys(symptomTotals).forEach((key) => {
+      symptomTotals[key] += log[key] || 0;
+    });
   });
+
+  const mostSevereSymptom = Object.entries(symptomTotals).reduce(
+    (max, [symptom, total]) => total > max.value ? { key: symptom, value: total } : max,
+    { key: '', value: -1 }
+  );
+
+  // Choose mascot image based on usage
+  let mascotImage = require('../../assets/images/gut_sad.png');
+  let mascotMessage = "I'm not feeling great... let's log some symptoms!";
+
+  if (totalLogs >= 10) {
+    mascotImage = require('../../assets/images/gut_zen.png');
+    mascotMessage = "You've achieved gut peace 🧘 Keep up the amazing work!";
+  } else if (totalLogs >= 7) {
+    mascotImage = require('../../assets/images/gut_happy.png');
+    mascotMessage = "You're doing great! Just a few more logs for full zen 🙌";
+  } else if (totalLogs >= 4) {
+    mascotImage = require('../../assets/images/gut_neutral.png');
+    mascotMessage = "We're getting there—keep logging to improve your gut health!";
+  }
 
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.title}>Dashboard</Text>
+
+      <Image source={mascotImage} style={styles.mascot} />
+      <Text style={styles.mascotMessage}>{mascotMessage}</Text>
 
       <View style={styles.cardRow}>
         <View style={styles.card}>
@@ -57,38 +80,21 @@ const DashboardScreen = () => {
         </View>
       </View>
 
-      <Text style={styles.subtitle}>Recent Symptoms</Text>
-      {Object.entries(recentSymptoms).map(([symptom, count]) => {
-        const pretty = symptom.charAt(0).toUpperCase() + symptom.slice(1);
-        const emoji = symptom.toLowerCase().includes('good') ||
-          symptom.toLowerCase().includes('great')
-          ? '🟢'
-          : symptom.toLowerCase().includes('bad') ||
-            symptom.toLowerCase().includes('pain')
-          ? '🔴'
-          : '🟡';
-
-        return (
-          <View key={symptom} style={styles.symptomRow}>
-            <Text style={{ color: 'white' }}>
-              {emoji} {pretty} — {count}
-            </Text>
-          </View>
-        );
-      })}
+      <Text style={styles.subtitle}>Most Severe Symptom</Text>
+      {mostSevereSymptom.value > 0 ? (
+        <View style={styles.tipBox}>
+          <Text style={styles.tipText}>
+            😟 <Text style={{ fontWeight: 'bold' }}>{mostSevereSymptom.key.replace(/_/g, ' ')}</Text> had the highest severity — total score: {mostSevereSymptom.value}
+          </Text>
+          <Text style={styles.tipText}>💡 Consider monitoring or consulting your doctor if this persists.</Text>
+        </View>
+      ) : (
+        <Text style={styles.tipText}>No symptom sliders logged yet</Text>
+      )}
 
       <Text style={styles.subtitle}>Weekly Symptom Trends</Text>
-      <View style={styles.chartBox}>
-        <BarChart
-          style={{ height: 150 }}
-          data={logs.map((log) => log.pain)}
-          svg={{ fill: '#60a5fa' }}
-          spacingInner={0.3}
-          contentInset={{ top: 10, bottom: 10 }}
-          curve={shape.curveLinear}
-        >
-          <Grid />
-        </BarChart>
+      <View style={styles.chartPlaceholder}>
+        <Text style={{ color: '#94a3b8' }}>📊 [Chart Placeholder]</Text>
       </View>
     </ScrollView>
   );
@@ -98,27 +104,28 @@ const styles = StyleSheet.create({
   container: { flex: 1, padding: 16, backgroundColor: '#0e1629' },
   loader: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   title: { fontSize: 24, color: 'white', fontWeight: 'bold', marginBottom: 16 },
+  mascot: { width: 180, height: 180, alignSelf: 'center', marginBottom: 8 },
+  mascotMessage: { color: '#cbd5e1', textAlign: 'center', fontSize: 16, marginBottom: 16 },
   cardRow: { flexDirection: 'row', justifyContent: 'space-between' },
-  card: {
-    backgroundColor: '#1e293b',
-    borderRadius: 12,
-    padding: 16,
-    flex: 0.48,
-  },
+  card: { backgroundColor: '#1e293b', borderRadius: 12, padding: 16, flex: 0.48 },
   label: { color: '#94a3b8', fontSize: 14 },
   value: { color: 'white', fontSize: 20, fontWeight: 'bold' },
   subtitle: { marginTop: 24, marginBottom: 8, color: 'white', fontSize: 18 },
-  symptomRow: {
-    paddingVertical: 6,
-    borderBottomColor: '#334155',
-    borderBottomWidth: 1,
+  tipBox: {
+    backgroundColor: '#0f172a',
+    borderLeftColor: '#22c55e',
+    borderLeftWidth: 5,
+    borderRadius: 8,
+    padding: 12,
+    marginVertical: 4,
   },
-  chartBox: {
+  tipText: { color: '#e2e8f0', fontSize: 14, marginBottom: 4 },
+  chartPlaceholder: {
     backgroundColor: '#1e293b',
     borderRadius: 12,
-    padding: 16,
+    padding: 24,
+    alignItems: 'center',
     marginTop: 12,
-    height: 200,
   },
 });
 

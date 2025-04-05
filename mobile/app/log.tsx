@@ -1,129 +1,136 @@
-import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  ScrollView,
+  Button,
+  Alert,
+} from 'react-native';
 import Slider from '@react-native-community/slider';
-import { useState } from 'react';
 
-export default function LogScreen() {
-  const [pain, setPain] = useState(5);
-  const [nausea, setNausea] = useState(5);
-  const [notes, setNotes] = useState('');
+const LogScreen = () => {
+  const [formData, setFormData] = useState({
+    pain: 0,
+    nausea: 0,
+    fatigue: 0,
+    diarrhea: 0,
+    appetite_loss: 0,
+    weight_change: 0,
+    blood_in_stool: 0,
+    stress_level: 0,
+    notes: '',
+  });
 
   const handleSubmit = async () => {
     try {
-      const response = await fetch('http://172.16.58.176:8000/log', {
+      const response = await fetch('http://10.104.238.249:8000/log', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pain, nausea, notes }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
       });
-
+  
       const data = await response.json();
-      console.log("✅ Log submitted:", data);
-
-      // Optional: clear notes or show a confirmation
-      setNotes('');
-    } catch (err) {
-      console.error("❌ Failed to submit log:", err);
+      Alert.alert('✅ Log Submitted', `Total logs: ${data.total_logs}`);
+    } catch (error) {
+      Alert.alert('Error', 'Failed to submit log.');
+      console.error(error);
     }
   };
+  
 
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Log Today's Symptoms</Text>
-
-      <View style={styles.sliderContainer}>
-        <Text style={styles.label}>Abdominal Pain 😣</Text>
-        <View style={styles.sliderRow}>
-          <Slider
-            style={styles.slider}
-            minimumValue={0}
-            maximumValue={10}
-            step={1}
-            value={pain}
-            onValueChange={setPain}
-          />
-          <Text style={styles.sliderValue}>{pain}</Text>
-        </View>
-      </View>
-
-      <View style={styles.sliderContainer}>
-        <Text style={styles.label}>Nausea 🤢</Text>
-        <View style={styles.sliderRow}>
-          <Slider
-            style={styles.slider}
-            minimumValue={0}
-            maximumValue={10}
-            step={1}
-            value={nausea}
-            onValueChange={setNausea}
-          />
-          <Text style={styles.sliderValue}>{nausea}</Text>
-        </View>
-      </View>
-
-      <Text style={styles.label}>Notes</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Any observations today?"
-        value={notes}
-        onChangeText={setNotes}
-        multiline
+  const renderSlider = (label, key) => (
+    <View style={styles.sliderContainer} key={key}>
+      <Text style={styles.sliderLabel}>
+        {label}: <Text style={styles.sliderValue}>{formData[key]}</Text>
+      </Text>
+      <Slider
+        style={{ width: '100%' }}
+        minimumValue={0}
+        maximumValue={10}
+        step={1}
+        value={formData[key]}
+        minimumTrackTintColor="#22c55e"
+        maximumTrackTintColor="#ccc"
+        thumbTintColor="#22c55e"
+        onValueChange={(value) => setFormData({ ...formData, [key]: value })}
       />
-
-      <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-        <Text style={styles.buttonText}>Submit Log</Text>
-      </TouchableOpacity>
     </View>
   );
-}
+
+  const symptomSliders = [
+    { label: 'Pain', key: 'pain' },
+    { label: 'Nausea', key: 'nausea' },
+    { label: 'Fatigue', key: 'fatigue' },
+    { label: 'Diarrhea', key: 'diarrhea' },
+    { label: 'Appetite Loss', key: 'appetite_loss' },
+    { label: 'Weight Change', key: 'weight_change' },
+    { label: 'Blood in Stool', key: 'blood_in_stool' },
+    { label: 'Stress Level', key: 'stress_level' },
+  ];
+
+  return (
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.title}>📋 Log Symptoms</Text>
+
+      {symptomSliders.map(({ label, key }) => renderSlider(label, key))}
+
+      <Text style={styles.label}>📝 Notes:</Text>
+      <TextInput
+        style={styles.textInput}
+        multiline
+        numberOfLines={4}
+        placeholder="Add notes about your day..."
+        placeholderTextColor="#888"
+        value={formData.notes}
+        onChangeText={(text) => setFormData({ ...formData, notes: text })}
+      />
+
+      <Button title="Submit Log" color="#22c55e" onPress={handleSubmit} />
+    </ScrollView>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#0f172a',
     padding: 20,
+    backgroundColor: '#0e1629',
+    flexGrow: 1,
   },
   title: {
-    color: '#f8fafc',
     fontSize: 24,
+    color: 'white',
+    marginBottom: 24,
     fontWeight: 'bold',
-    marginBottom: 20,
   },
   sliderContainer: {
-    marginTop: 15,
+    marginBottom: 20,
   },
-  label: {
-    color: '#cbd5e1',
-    marginBottom: 5,
-  },
-  sliderRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  slider: {
-    flex: 1,
+  sliderLabel: {
+    color: '#94a3b8',
+    fontSize: 16,
+    marginBottom: 4,
   },
   sliderValue: {
-    color: '#f8fafc',
-    marginLeft: 10,
+    color: '#22c55e',
     fontWeight: 'bold',
   },
-  input: {
-    borderWidth: 1,
-    borderColor: '#475569',
-    borderRadius: 10,
-    padding: 10,
-    color: '#f1f5f9',
-    marginTop: 8,
-  },
-  button: {
-    marginTop: 30,
-    backgroundColor: '#3b82f6',
-    padding: 15,
-    borderRadius: 12,
-  },
-  buttonText: {
-    color: '#fff',
-    textAlign: 'center',
-    fontWeight: 'bold',
+  label: {
+    color: '#94a3b8',
     fontSize: 16,
+    marginTop: 12,
+    marginBottom: 6,
+  },
+  textInput: {
+    backgroundColor: '#1e293b',
+    color: 'white',
+    borderRadius: 10,
+    padding: 12,
+    marginBottom: 20,
   },
 });
+
+export default LogScreen;
