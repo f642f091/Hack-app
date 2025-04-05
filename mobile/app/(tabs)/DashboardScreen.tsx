@@ -1,12 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, ActivityIndicator, StyleSheet, Image } from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  ActivityIndicator,
+  StyleSheet,
+  Image,
+  SafeAreaView,
+} from 'react-native';
 
 const DashboardScreen = () => {
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('http://10.104.238.249:8000/summary') // 👈 Update with current IP
+    fetch('http://10.104.238.249:8000/summary')
       .then((res) => res.json())
       .then((data) => {
         setLogs(data.logs || []);
@@ -25,29 +33,26 @@ const DashboardScreen = () => {
   const totalLogs = logs.length;
   const avgPain = logs.reduce((sum, log) => sum + (log.pain || 0), 0) / (totalLogs || 1);
 
-  const symptomTotals = {
-    pain: 0,
-    nausea: 0,
-    fatigue: 0,
-    diarrhea: 0,
-    appetite_loss: 0,
-    weight_change: 0,
-    blood_in_stool: 0,
-    stress_level: 0,
-  };
+  const symptomKeys = [
+    'pain',
+    'nausea',
+    'fatigue',
+    'diarrhea',
+    'appetite_loss',
+    'weight_change',
+    'blood_in_stool',
+    'stress_level',
+  ];
 
-  logs.forEach((log) => {
-    Object.keys(symptomTotals).forEach((key) => {
-      symptomTotals[key] += log[key] || 0;
-    });
-  });
+  const symptomSums = symptomKeys.reduce((acc, key) => {
+    acc[key] = logs.reduce((sum, log) => sum + (log[key] || 0), 0);
+    return acc;
+  }, {});
 
-  const mostSevereSymptom = Object.entries(symptomTotals).reduce(
-    (max, [symptom, total]) => total > max.value ? { key: symptom, value: total } : max,
-    { key: '', value: -1 }
-  );
+  const mostSevereKey = symptomKeys.reduce((maxKey, key) =>
+    symptomSums[key] > symptomSums[maxKey] ? key : maxKey
+  , symptomKeys[0]);
 
-  // Choose mascot image based on usage
   let mascotImage = require('../../assets/images/gut_sad.png');
   let mascotMessage = "I'm not feeling great... let's log some symptoms!";
 
@@ -62,46 +67,48 @@ const DashboardScreen = () => {
     mascotMessage = "We're getting there—keep logging to improve your gut health!";
   }
 
+  const shouldSeeDoctor = avgPain >= 7;
+
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.title}>Dashboard</Text>
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView style={styles.container}>
+        <Text style={styles.title}>Dashboard</Text>
 
-      <Image source={mascotImage} style={styles.mascot} />
-      <Text style={styles.mascotMessage}>{mascotMessage}</Text>
+        <Image source={mascotImage} style={styles.mascot} />
+        <Text style={styles.mascotMessage}>{mascotMessage}</Text>
 
-      <View style={styles.cardRow}>
-        <View style={styles.card}>
-          <Text style={styles.label}>Days Logged</Text>
-          <Text style={styles.value}>{totalLogs}</Text>
+        <View style={styles.cardRow}>
+          <View style={styles.card}>
+            <Text style={styles.label}>Days Logged</Text>
+            <Text style={styles.value}>{totalLogs}</Text>
+          </View>
+          <View style={styles.card}>
+            <Text style={styles.label}>Avg. Pain</Text>
+            <Text style={styles.value}>{avgPain.toFixed(1)}</Text>
+          </View>
         </View>
-        <View style={styles.card}>
-          <Text style={styles.label}>Avg. Pain</Text>
-          <Text style={styles.value}>{avgPain.toFixed(1)}</Text>
-        </View>
-      </View>
 
-      <Text style={styles.subtitle}>Most Severe Symptom</Text>
-      {mostSevereSymptom.value > 0 ? (
-        <View style={styles.tipBox}>
-          <Text style={styles.tipText}>
-            😟 <Text style={{ fontWeight: 'bold' }}>{mostSevereSymptom.key.replace(/_/g, ' ')}</Text> had the highest severity — total score: {mostSevereSymptom.value}
-          </Text>
-          <Text style={styles.tipText}>💡 Consider monitoring or consulting your doctor if this persists.</Text>
-        </View>
-      ) : (
-        <Text style={styles.tipText}>No symptom sliders logged yet</Text>
-      )}
+        {shouldSeeDoctor && (
+          <View style={styles.alertBoxDoctor}>
+            <Text style={styles.alertText}>Consider seeing a doctor based on your recent symptoms.</Text>
+          </View>
+        )}
 
-      <Text style={styles.subtitle}>Weekly Symptom Trends</Text>
-      <View style={styles.chartPlaceholder}>
-        <Text style={{ color: '#94a3b8' }}>📊 [Chart Placeholder]</Text>
-      </View>
-    </ScrollView>
+        <Text style={styles.subtitle}>Most Severe Symptom</Text>
+        <Text style={styles.alertText}>{symptomSums[mostSevereKey] > 0 ? `${mostSevereKey.replace('_', ' ')} — total: ${symptomSums[mostSevereKey]}` : 'No symptom sliders logged yet'}</Text>
+
+        <Text style={styles.subtitle}>Weekly Symptom Trends</Text>
+        <View style={styles.chartPlaceholder}>
+          <Text style={{ color: '#94a3b8' }}>📊 [Chart Placeholder]</Text>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, backgroundColor: '#0e1629' },
+  safeArea: { flex: 1, backgroundColor: '#0e1629' },
+  container: { flex: 1, padding: 16 },
   loader: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   title: { fontSize: 24, color: 'white', fontWeight: 'bold', marginBottom: 16 },
   mascot: { width: 180, height: 180, alignSelf: 'center', marginBottom: 8 },
@@ -111,15 +118,13 @@ const styles = StyleSheet.create({
   label: { color: '#94a3b8', fontSize: 14 },
   value: { color: 'white', fontSize: 20, fontWeight: 'bold' },
   subtitle: { marginTop: 24, marginBottom: 8, color: 'white', fontSize: 18 },
-  tipBox: {
-    backgroundColor: '#0f172a',
-    borderLeftColor: '#22c55e',
-    borderLeftWidth: 5,
+  alertBoxDoctor: {
+    backgroundColor: '#4f46e5',
     borderRadius: 8,
     padding: 12,
-    marginVertical: 4,
+    marginTop: 12,
   },
-  tipText: { color: '#e2e8f0', fontSize: 14, marginBottom: 4 },
+  alertText: { color: 'white', fontSize: 14 },
   chartPlaceholder: {
     backgroundColor: '#1e293b',
     borderRadius: 12,

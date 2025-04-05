@@ -1,31 +1,68 @@
-import { View, Text, StyleSheet } from 'react-native';
+import React from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { useRouter } from 'expo-router';
 
-export default function CommunityScreen() {
+const CommunityScreen = () => {
+  const router = useRouter();
+
+  const topics = [
+    { name: 'Diet Tips', route: '/diet-tips', color: '#4ade80' },
+    { name: 'Newly Diagnosed', route: '/newly-diagnosed', color: '#38bdf8' },
+    { name: 'Coping Strategies', route: '/coping-strategies', color: '#facc15' },
+    { name: 'Medication Talk', route: '/medication-discussion', color: '#f472b6' },
+  ];
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>🌐 Community</Text>
-      <Text style={styles.subtitle}>
-        Coming soon! This is where users will share stories, ask questions, and support each other.
-      </Text>
+      <Text style={styles.title}>Community</Text>
+      <View style={styles.grid}>
+        {topics.map((topic) => (
+          <TouchableOpacity
+            key={topic.name}
+            style={[styles.box, { backgroundColor: topic.color }]}
+            onPress={() => router.push(topic.route)}
+          >
+            <Text style={styles.boxText}>{topic.name}</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0f172a',
-    padding: 20,
-    justifyContent: 'center',
+    backgroundColor: '#0e1629',
+    paddingHorizontal: 20,
+    paddingTop: 50,
   },
   title: {
-    color: '#f8fafc',
-    fontSize: 24,
+    color: 'white',
+    fontSize: 28,
     fontWeight: 'bold',
-    marginBottom: 10,
+    textAlign: 'center',
+    marginBottom: 20,
   },
-  subtitle: {
-    color: '#94a3b8',
-    fontSize: 16,
+  grid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    rowGap: 20,
+  },
+  box: {
+    width: '48%',
+    height: 120,
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  boxText: {
+    color: '#0f172a',
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });
+
+export default CommunityScreen;
