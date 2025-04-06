@@ -16,8 +16,18 @@ export default function HomeScreen() {
         <Text style={styles.buttonText}>+ Log Today’s Symptoms</Text>
       </Pressable>
 
-      <Pressable style={[styles.button, styles.secondaryButton]} onPress={() => router.push('DashboardScreen')}>
+      <Pressable
+        style={[styles.button, styles.secondaryButton]}
+        onPress={() => router.push('DashboardScreen')}
+      >
         <Text style={styles.buttonText}>📊 View Dashboard</Text>
+      </Pressable>
+
+      <Pressable
+        style={[styles.button, styles.secondaryButton]}
+        onPress={() => router.push('/medication-tracker')}
+      >
+        <Text style={styles.buttonText}>💊 Track Medication</Text>
       </Pressable>
     </View>
   );
