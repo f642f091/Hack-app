@@ -10,6 +10,8 @@ const CommunityScreen = () => {
     { name: 'Newly Diagnosed', route: '/newly-diagnosed', color: '#38bdf8' },
     { name: 'Coping Strategies', route: '/coping-strategies', color: '#facc15' },
     { name: 'Medication Talk', route: '/medication-discussion', color: '#f472b6' },
+    { name: 'Nearby Restaurants', route: '/Restaurants', color: '#a78bfa' },
+    { name: 'Nearby Hospitals', route: '/Hospitals', color: '#ef4444' }
   ];
 
   return (

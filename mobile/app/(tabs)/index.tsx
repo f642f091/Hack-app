@@ -16,7 +16,7 @@ export default function HomeScreen() {
         <Text style={styles.buttonText}>+ Log Today’s Symptoms</Text>
       </Pressable>
 
-      <Pressable style={[styles.button, styles.secondaryButton]} onPress={() => router.push('/dashboard')}>
+      <Pressable style={[styles.button, styles.secondaryButton]} onPress={() => router.push('DashboardScreen')}>
         <Text style={styles.buttonText}>📊 View Dashboard</Text>
       </Pressable>
     </View>
