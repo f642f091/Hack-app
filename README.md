@@ -1,6 +1,6 @@
 # 🏥 IBD Tracker
 
-A mobile app built with [Expo](https://expo.dev), [React Native](https://reactnative.dev), and [FastAPI](https://fastapi.tiangolo.com/) to help people with Inflammatory Bowel Disease (IBD) track symptoms, monitor trends, and export weekly reports to share with their healthcare providers.
+A mobile + web app built with [Expo](https://expo.dev), [React Native](https://reactnative.dev), [Styled Components](https://styled-components.com), and [FastAPI](https://fastapi.tiangolo.com/) to help people with Inflammatory Bowel Disease (IBD) track symptoms, monitor trends, engage in community discussions, and share weekly reports with healthcare providers.
 
 ---
 
@@ -13,7 +13,7 @@ git clone https://github.com/your-username/ibd-tracker.git
 cd ibd-tracker
 ```
 
-### 2. Install dependencies
+### 2. Install mobile dependencies
 
 ```bash
 cd mobile
@@ -34,16 +34,40 @@ Open it in:
 
 ---
 
-## 🤪 Backend Setup (FastAPI)
+## 🌐 Website (Cluster Insights Dashboard)
 
-Ensure FastAPI and uvicorn are installed.
+The `website/` folder contains a React dashboard that visualizes medication usage patterns among IBD patients based on unsupervised clustering.
+
+### Tech Stack:
+- React + Styled Components
+- Hardcoded clusters generated from a real CSV dataset
+- Fully responsive layout for cluster exploration
+
+To run:
 
 ```bash
-cd server
-uvicorn main:app --reload
+cd website
+npm install
+npm run dev
 ```
 
-> Backend runs at `http://localhost:8000` (or your LAN IP if using device).
+---
+
+## 🧠 Clustering + ML Features
+
+We used unsupervised learning to group patients into clusters based on medication profiles. This helps identify treatment trends and variations across subpopulations.
+
+### Algorithms Used:
+
+- **K-Means Clustering** on medication usage vectors
+- **Feature Engineering** on symptom logs
+- **TSNE** or **PCA** for dimensionality reduction (optional)
+
+### Future ML Plans:
+
+- ✅ Match new users to clusters based on current meds
+- 📪 Predict flare-ups from symptom patterns
+- 📈 Optimize treatment suggestions using reinforcement learning
 
 ---
 
@@ -52,14 +76,15 @@ uvicorn main:app --reload
 - ✅ Log daily symptoms (pain, nausea, fatigue, stress, etc.)
 - 📊 View progress on a dynamic dashboard
 - 💬 Community discussions: diet, coping, medication
-- �� Friendly mascot responds to your log consistency
+- 🐣 Friendly mascot responds to your log consistency
 - 🗓️ Medication tracker with calendar check-ins
-- 🗙️ Map of nearby IBD-friendly restaurants and clinics
+- 🗘️ Map of nearby IBD-friendly restaurants and clinics
 - 📄 Export or preview weekly symptom report as a PDF
+- 📚 Explore clusters of patient profiles via the dashboard
 
 ---
 
-## 🛄 PDF Report
+## 🎢 PDF Report
 
 From the Profile screen, users can:
 - **Preview** the current report
@@ -68,29 +93,13 @@ From the Profile screen, users can:
 
 ---
 
-## 💠 Structure
+## 🔠 Structure
 
 ```
-/mobile       ← Frontend (Expo)
-  /app
-  /components
-  /assets
+/mobile       ← Frontend (Expo/React Native)
+/website      ← Cluster insights dashboard (React)
 /server       ← Backend (FastAPI)
-  main.py
 ```
-
----
-
-## 📸 Screenshots
-
-_You can include screenshots of:_
-
-- 📋 Log screen  
-- 📊 Dashboard charts  
-- 📄 PDF report preview  
-- 💬 Community forums  
-- 💊 Medication tracker  
-- 🗙️ Clinic/restaurant map
 
 ---
 
@@ -108,6 +117,7 @@ Built with ❤️ during a hackathon focused on real-world impact for chronic il
 - [Expo Docs](https://docs.expo.dev)
 - [React Native Maps](https://github.com/react-native-maps/react-native-maps)
 - [react-native-calendars](https://github.com/wix/react-native-calendars)
+- [Styled Components](https://styled-components.com)
 - [FastAPI](https://fastapi.tiangolo.com)
 
 ---
@@ -115,3 +125,4 @@ Built with ❤️ during a hackathon focused on real-world impact for chronic il
 ## 📄 License
 
 MIT © 2025
+
