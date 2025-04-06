@@ -19,7 +19,7 @@ const DashboardScreen = () => {
   const [expanded, setExpanded] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch('http://10.104.238.249:8000/summary')
+    fetch('http://10.104.238.249:8000/summary') // Varies based on connected wifi
       .then((res) => res.json())
       .then((data) => {
         setLogs(data.logs || []);
@@ -64,13 +64,13 @@ const DashboardScreen = () => {
   let mascotImage = require('../../assets/images/gut_sad.png');
   let mascotMessage = "I'm not feeling great... let's log some symptoms!";
 
-  if (totalLogs >= 6) {
+  if (totalLogs >= 6) { // last level "zen"
     mascotImage = require('../../assets/images/gut_zen.png');
     mascotMessage = "You've achieved gut peace 🧘 Keep up the amazing work!";
-  } else if (totalLogs >= 4) {
+  } else if (totalLogs >= 4) { // 3rd level 
     mascotImage = require('../../assets/images/gut_happy.png');
     mascotMessage = "You're doing great! Just a few more logs for full zen 🙌";
-  } else if (totalLogs >= 2) {
+  } else if (totalLogs >= 2) { // second level, neutral gut
     mascotImage = require('../../assets/images/gut_neutral.png');
     mascotMessage = "We're getting there—keep logging to improve your gut health!";
   }

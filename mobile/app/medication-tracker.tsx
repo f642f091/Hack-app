@@ -5,7 +5,7 @@ import { Calendar } from 'react-native-calendars';
 export default function MedicationTracker() {
   const [markedDates, setMarkedDates] = useState({});
 
-  const toggleDayMark = (day) => {
+  const toggleDayMark = (day) => { // taken the medicine on this day
     const newMarked = { ...markedDates };
     if (newMarked[day.dateString]) {
       delete newMarked[day.dateString];

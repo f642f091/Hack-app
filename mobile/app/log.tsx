@@ -7,6 +7,8 @@ import {
   ScrollView,
   Button,
   Alert,
+  Keyboard,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import Slider from '@react-native-community/slider';
 
@@ -32,7 +34,7 @@ const LogScreen = () => {
         },
         body: JSON.stringify(formData),
       });
-  
+
       const data = await response.json();
       Alert.alert('✅ Log Submitted', `Total logs: ${data.total_logs}`);
     } catch (error) {
@@ -40,7 +42,6 @@ const LogScreen = () => {
       console.error(error);
     }
   };
-  
 
   const renderSlider = (label, key) => (
     <View style={styles.sliderContainer} key={key}>
@@ -73,24 +74,28 @@ const LogScreen = () => {
   ];
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>📋 Log Symptoms</Text>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+        <Text style={styles.title}>📋 Log Symptoms</Text>
 
-      {symptomSliders.map(({ label, key }) => renderSlider(label, key))}
+        {symptomSliders.map(({ label, key }) => renderSlider(label, key))}
 
-      <Text style={styles.label}>📝 Notes:</Text>
-      <TextInput
-        style={styles.textInput}
-        multiline
-        numberOfLines={4}
-        placeholder="Add notes about your day..."
-        placeholderTextColor="#888"
-        value={formData.notes}
-        onChangeText={(text) => setFormData({ ...formData, notes: text })}
-      />
+        <Text style={styles.label}>📝 Notes:</Text>
+        <TextInput
+          style={styles.textInput}
+          multiline
+          numberOfLines={4}
+          placeholder="Add notes about your day..."
+          placeholderTextColor="#888"
+          value={formData.notes}
+          onChangeText={(text) => setFormData({ ...formData, notes: text })}
+          onSubmitEditing={Keyboard.dismiss}
+          blurOnSubmit={true}
+        />
 
-      <Button title="Submit Log" color="#22c55e" onPress={handleSubmit} />
-    </ScrollView>
+        <Button title="Submit Log" color="#22c55e" onPress={handleSubmit} />
+      </ScrollView>
+    </TouchableWithoutFeedback>
   );
 };
 
