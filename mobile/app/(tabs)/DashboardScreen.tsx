@@ -7,11 +7,16 @@ import {
   StyleSheet,
   Image,
   SafeAreaView,
+  TouchableOpacity,
 } from 'react-native';
+import { BarChart, Grid } from 'react-native-svg-charts';
+import * as shape from 'd3-shape';
+import { Ionicons } from '@expo/vector-icons';
 
 const DashboardScreen = () => {
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [expanded, setExpanded] = useState<string | null>(null);
 
   useEffect(() => {
     fetch('http://10.104.238.249:8000/summary')
@@ -33,7 +38,7 @@ const DashboardScreen = () => {
   const totalLogs = logs.length;
   const avgPain = logs.reduce((sum, log) => sum + (log.pain || 0), 0) / (totalLogs || 1);
 
-  const symptomKeys = [
+  const allSymptomKeys = [
     'pain',
     'nausea',
     'fatigue',
@@ -44,14 +49,17 @@ const DashboardScreen = () => {
     'stress_level',
   ];
 
-  const symptomSums = symptomKeys.reduce((acc, key) => {
-    acc[key] = logs.reduce((sum, log) => sum + (log[key] || 0), 0);
-    return acc;
-  }, {});
+  const symptomSums: Record<string, number> = {};
+  const symptomKeys = allSymptomKeys.filter((key) => {
+    const total = logs.reduce((sum, log) => sum + (log[key] || 0), 0);
+    symptomSums[key] = total;
+    return total > 0;
+  });
 
   const mostSevereKey = symptomKeys.reduce((maxKey, key) =>
-    symptomSums[key] > symptomSums[maxKey] ? key : maxKey
-  , symptomKeys[0]);
+    symptomSums[key] > symptomSums[maxKey] ? key : maxKey,
+    symptomKeys[0]
+  );
 
   let mascotImage = require('../../assets/images/gut_sad.png');
   let mascotMessage = "I'm not feeling great... let's log some symptoms!";
@@ -95,12 +103,42 @@ const DashboardScreen = () => {
         )}
 
         <Text style={styles.subtitle}>Most Severe Symptom</Text>
-        <Text style={styles.alertText}>{symptomSums[mostSevereKey] > 0 ? `${mostSevereKey.replace('_', ' ')} — total: ${symptomSums[mostSevereKey]}` : 'No symptom sliders logged yet'}</Text>
+        <Text style={styles.alertText}>{
+          symptomSums[mostSevereKey] > 0
+            ? `${mostSevereKey.replace('_', ' ')} — total: ${symptomSums[mostSevereKey]}`
+            : 'No symptom sliders logged yet'}
+        </Text>
 
         <Text style={styles.subtitle}>Weekly Symptom Trends</Text>
-        <View style={styles.chartPlaceholder}>
-          <Text style={{ color: '#94a3b8' }}>📊 [Chart Placeholder]</Text>
-        </View>
+        {symptomKeys.map((key) => (
+          <View key={key}>
+            <TouchableOpacity
+              style={styles.dropdownHeader}
+              onPress={() => setExpanded(expanded === key ? null : key)}
+            >
+              <Text style={styles.dropdownText}>{key.replace('_', ' ')}</Text>
+              <Ionicons
+                name={expanded === key ? 'chevron-up' : 'chevron-down'}
+                size={20}
+                color="white"
+              />
+            </TouchableOpacity>
+            {expanded === key && (
+              <View style={styles.chartBox}>
+                <BarChart
+                  style={{ height: 150 }}
+                  data={logs.map((log) => log[key])}
+                  svg={{ fill: '#60a5fa' }}
+                  spacingInner={0.3}
+                  contentInset={{ top: 10, bottom: 10 }}
+                  curve={shape.curveLinear}
+                >
+                  <Grid />
+                </BarChart>
+              </View>
+            )}
+          </View>
+        ))}
       </ScrollView>
     </SafeAreaView>
   );
@@ -125,12 +163,25 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
   alertText: { color: 'white', fontSize: 14 },
-  chartPlaceholder: {
+  chartBox: {
     backgroundColor: '#1e293b',
     borderRadius: 12,
-    padding: 24,
-    alignItems: 'center',
+    padding: 16,
     marginTop: 12,
+    height: 200,
+  },
+  dropdownHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    backgroundColor: '#1e293b',
+    borderRadius: 8,
+    padding: 12,
+    marginTop: 8,
+  },
+  dropdownText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
 });
 

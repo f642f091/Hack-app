@@ -47,12 +47,13 @@ const styles = StyleSheet.create({
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
+    paddingRight: 20,
     justifyContent: 'space-between',
     rowGap: 20,
   },
   box: {
-    width: '48%',
-    height: 120,
+    width: '43%',
+    height: 200,
     borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
