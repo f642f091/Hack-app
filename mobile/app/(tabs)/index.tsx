@@ -1,5 +1,11 @@
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
+import { LogBox } from 'react-native';
+
+LogBox.ignoreLogs([
+  'Support for defaultProps will be removed from function components', // suppress specific warning
+]);
+
 
 export default function HomeScreen() {
   const router = useRouter();

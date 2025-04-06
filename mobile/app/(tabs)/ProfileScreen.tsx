@@ -1,14 +1,82 @@
-import React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, Image, Button, Alert, ScrollView } from 'react-native';
+import { shareAsync } from 'expo-sharing';
+import * as Print from 'expo-print';
 
-export default function ProfileScreen() {
+const ProfileScreen = () => {
+  const [logs, setLogs] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('http://10.104.238.249:8000/summary')
+      .then((res) => res.json())
+      .then((data) => {
+        setLogs(data.logs || []);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error('Error fetching summary:', err);
+        setLoading(false);
+      });
+  }, []);
+
+  const totalLogs = logs.length;
+  const avgPain = logs.reduce((sum, log) => sum + (log.pain || 0), 0) / (totalLogs || 1);
+
+  const generateHtml = () => {
+    const rows = logs.map((log, i) => `
+      <tr>
+        <td>${i + 1}</td>
+        <td>${log.pain}</td>
+        <td>${log.nausea}</td>
+        <td>${log.fatigue}</td>
+        <td>${log.diarrhea}</td>
+        <td>${log.notes}</td>
+      </tr>`).join('');
+
+    return `
+      <html>
+        <head>
+          <style>
+            body { font-family: sans-serif; padding: 16px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+            th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+            th { background-color: #f3f4f6; }
+          </style>
+        </head>
+        <body>
+          <h1>Weekly Symptom Report</h1>
+          <p>Total Logs: ${totalLogs}</p>
+          <p>Average Pain: ${avgPain.toFixed(1)}</p>
+          <table>
+            <tr>
+              <th>#</th><th>Pain</th><th>Nausea</th><th>Fatigue</th><th>Diarrhea</th><th>Notes</th>
+            </tr>
+            ${rows}
+          </table>
+        </body>
+      </html>
+    `;
+  };
+
+  const handleExport = async () => {
+    try {
+      const html = generateHtml();
+      const { uri } = await Print.printToFileAsync({ html });
+      await shareAsync(uri);
+    } catch (error) {
+      Alert.alert('Error', 'Failed to export PDF.');
+      console.error(error);
+    }
+  };
+
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>My Profile</Text>
 
       <View style={styles.profileSection}>
         <Image
-          source={require('../../assets/images/gut_happy.png')} // 👈 Your mascot avatar
+          source={require('../../assets/images/gut_happy.png')}
           style={styles.avatar}
         />
         <Text style={styles.name}>John Doe</Text>
@@ -35,13 +103,17 @@ export default function ProfileScreen() {
           "I’ve been tracking my symptoms for 3 weeks now and I feel more in control of my condition every day."
         </Text>
       </View>
-    </View>
+
+      <View style={{ marginTop: 24 }}>
+        <Button title="📄 Export PDF Report" onPress={handleExport} color="#22c55e" />
+      </View>
+    </ScrollView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     backgroundColor: '#0e1629',
     padding: 20,
     paddingTop: 50,
@@ -107,3 +179,5 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 });
+
+export default ProfileScreen;

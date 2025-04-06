@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -12,24 +12,28 @@ import {
 import { BarChart, Grid } from 'react-native-svg-charts';
 import * as shape from 'd3-shape';
 import { Ionicons } from '@expo/vector-icons';
+import { useFocusEffect } from '@react-navigation/native';
 
 const DashboardScreen = () => {
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetch('http://10.104.238.249:8000/summary') // Varies based on connected wifi
-      .then((res) => res.json())
-      .then((data) => {
-        setLogs(data.logs || []);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error('Error fetching summary:', err);
-        setLoading(false);
-      });
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      setLoading(true);
+      fetch('http://10.104.238.249:8000/summary')
+        .then((res) => res.json())
+        .then((data) => {
+          setLogs(data.logs || []);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.error('Error fetching summary:', err);
+          setLoading(false);
+        });
+    }, [])
+  );
 
   if (loading) {
     return <ActivityIndicator size="large" style={styles.loader} />;
@@ -64,13 +68,13 @@ const DashboardScreen = () => {
   let mascotImage = require('../../assets/images/gut_sad.png');
   let mascotMessage = "I'm not feeling great... let's log some symptoms!";
 
-  if (totalLogs >= 6) { // last level "zen"
+  if (totalLogs >= 6) {
     mascotImage = require('../../assets/images/gut_zen.png');
     mascotMessage = "You've achieved gut peace 🧘 Keep up the amazing work!";
-  } else if (totalLogs >= 4) { // 3rd level 
+  } else if (totalLogs >= 4) {
     mascotImage = require('../../assets/images/gut_happy.png');
     mascotMessage = "You're doing great! Just a few more logs for full zen 🙌";
-  } else if (totalLogs >= 2) { // second level, neutral gut
+  } else if (totalLogs >= 2) {
     mascotImage = require('../../assets/images/gut_neutral.png');
     mascotMessage = "We're getting there—keep logging to improve your gut health!";
   }
@@ -79,7 +83,7 @@ const DashboardScreen = () => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView style={styles.container}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 100 }} style={styles.container}>
         <Text style={styles.title}>Dashboard</Text>
 
         <Image source={mascotImage} style={styles.mascot} />
@@ -98,13 +102,15 @@ const DashboardScreen = () => {
 
         {shouldSeeDoctor && (
           <View style={styles.alertBoxDoctor}>
-            <Text style={styles.alertText}>Consider seeing a doctor based on your recent symptoms.</Text>
+            <Text style={styles.alertText}>
+              Consider seeing a doctor based on your recent symptoms.
+            </Text>
           </View>
         )}
 
         <Text style={styles.subtitle}>Most Severe Symptom</Text>
-        <Text style={styles.alertText}>{
-          symptomSums[mostSevereKey] > 0
+        <Text style={styles.alertText}>
+          {symptomSums[mostSevereKey] > 0
             ? `${mostSevereKey.replace('_', ' ')} — total: ${symptomSums[mostSevereKey]}`
             : 'No symptom sliders logged yet'}
         </Text>
@@ -152,7 +158,12 @@ const styles = StyleSheet.create({
   mascot: { width: 180, height: 180, alignSelf: 'center', marginBottom: 8 },
   mascotMessage: { color: '#cbd5e1', textAlign: 'center', fontSize: 16, marginBottom: 16 },
   cardRow: { flexDirection: 'row', justifyContent: 'space-between' },
-  card: { backgroundColor: '#1e293b', borderRadius: 12, padding: 16, flex: 0.48 },
+  card: {
+    backgroundColor: '#1e293b',
+    borderRadius: 12,
+    padding: 16,
+    flex: 0.48,
+  },
   label: { color: '#94a3b8', fontSize: 14 },
   value: { color: 'white', fontSize: 20, fontWeight: 'bold' },
   subtitle: { marginTop: 24, marginBottom: 8, color: 'white', fontSize: 18 },

@@ -5,12 +5,14 @@ import {
   TextInput,
   StyleSheet,
   ScrollView,
-  Button,
   Alert,
   Keyboard,
-  TouchableWithoutFeedback,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform
 } from 'react-native';
 import Slider from '@react-native-community/slider';
+import { Ionicons } from '@expo/vector-icons';
 
 const LogScreen = () => {
   const [formData, setFormData] = useState({
@@ -74,28 +76,35 @@ const LogScreen = () => {
   ];
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      style={{ flex: 1 }}
+      keyboardVerticalOffset={100}
+    >
       <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
         <Text style={styles.title}>📋 Log Symptoms</Text>
 
         {symptomSliders.map(({ label, key }) => renderSlider(label, key))}
 
         <Text style={styles.label}>📝 Notes:</Text>
-        <TextInput
-          style={styles.textInput}
-          multiline
-          numberOfLines={4}
-          placeholder="Add notes about your day..."
-          placeholderTextColor="#888"
-          value={formData.notes}
-          onChangeText={(text) => setFormData({ ...formData, notes: text })}
-          onSubmitEditing={Keyboard.dismiss}
-          blurOnSubmit={true}
-        />
-
-        <Button title="Submit Log" color="#22c55e" onPress={handleSubmit} />
+        <View style={styles.notesWrapper}>
+          <TextInput
+            style={styles.notesInput}
+            multiline
+            value={formData.notes}
+            onChangeText={(text) => setFormData({ ...formData, notes: text })}
+            placeholder="Add notes about your day..."
+            placeholderTextColor="#94a3b8"
+          />
+          <TouchableOpacity onPress={() => {
+            handleSubmit();
+            Keyboard.dismiss();
+          }}>
+            <Ionicons name="send" size={24} color="#22c55e" />
+          </TouchableOpacity>
+        </View>
       </ScrollView>
-    </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -129,12 +138,20 @@ const styles = StyleSheet.create({
     marginTop: 12,
     marginBottom: 6,
   },
-  textInput: {
+  notesWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: '#1e293b',
-    color: 'white',
     borderRadius: 10,
-    padding: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
     marginBottom: 20,
+  },
+  notesInput: {
+    flex: 1,
+    color: 'white',
+    fontSize: 14,
+    maxHeight: 120,
   },
 });
 
