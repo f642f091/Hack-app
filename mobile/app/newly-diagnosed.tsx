@@ -11,6 +11,7 @@ import {
   Keyboard,
 } from 'react-native';
 
+// hardcode user's posts
 const initialMessages = [
   { id: '1', name: 'Alice K.', initials: 'AK', message: 'Anyone here on biologics? How are the side effects?' },
   { id: '2', name: 'David P.', initials: 'DP', message: "I started Stelara 3 months ago and it's helped a lot." },
@@ -33,7 +34,7 @@ export default function MedicationDiscussion() {
     setMessages((prev) => [...prev, newMessage]);
     setInput('');
     setTimeout(() => flatListRef.current?.scrollToEnd({ animated: true }), 100);
-  };
+  }; // avoid problems with keyboard blocking view
 
   useEffect(() => {
     const showSub = Keyboard.addListener('keyboardDidShow', () =>

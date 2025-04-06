@@ -22,7 +22,7 @@ const DashboardScreen = () => {
   useFocusEffect(
     useCallback(() => {
       setLoading(true);
-      fetch('http://10.104.238.249:8000/summary')
+      fetch('http://10.104.238.249:8000/summary') // fetch from local/summary (varies depending on wifi connection)
         .then((res) => res.json())
         .then((data) => {
           setLogs(data.logs || []);
@@ -40,7 +40,7 @@ const DashboardScreen = () => {
   }
 
   const totalLogs = logs.length;
-  const avgPain = logs.reduce((sum, log) => sum + (log.pain || 0), 0) / (totalLogs || 1);
+  const avgPain = logs.reduce((sum, log) => sum + (log.pain || 0), 0) / (totalLogs || 1); // calculate avg
 
   const allSymptomKeys = [
     'pain',
@@ -66,20 +66,20 @@ const DashboardScreen = () => {
   );
 
   let mascotImage = require('../../assets/images/gut_sad.png');
-  let mascotMessage = "I'm not feeling great... let's log some symptoms!";
+  let mascotMessage = "I'm not feeling great... let's log some symptoms!"; // first stage of mascot
 
   if (totalLogs >= 6) {
-    mascotImage = require('../../assets/images/gut_zen.png');
+    mascotImage = require('../../assets/images/gut_zen.png'); // last stage of mascot
     mascotMessage = "You've achieved gut peace 🧘 Keep up the amazing work!";
   } else if (totalLogs >= 4) {
-    mascotImage = require('../../assets/images/gut_happy.png');
+    mascotImage = require('../../assets/images/gut_happy.png'); // third stage of mascot
     mascotMessage = "You're doing great! Just a few more logs for full zen 🙌";
   } else if (totalLogs >= 2) {
-    mascotImage = require('../../assets/images/gut_neutral.png');
+    mascotImage = require('../../assets/images/gut_neutral.png'); // second stage of mascot
     mascotMessage = "We're getting there—keep logging to improve your gut health!";
   }
 
-  const shouldSeeDoctor = avgPain >= 7;
+  const shouldSeeDoctor = avgPain >= 7; 
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -100,11 +100,11 @@ const DashboardScreen = () => {
           </View>
         </View>
 
-        {shouldSeeDoctor && (
+        {shouldSeeDoctor && (  // message after pain >= 7
           <View style={styles.alertBoxDoctor}>
-            <Text style={styles.alertText}>
-              Consider seeing a doctor based on your recent symptoms.
-            </Text>
+            <Text style={styles.alertText}> 
+              Consider seeing a doctor based on your recent symptoms. 
+            </Text> 
           </View>
         )}
 

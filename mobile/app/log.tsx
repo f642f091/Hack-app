@@ -29,7 +29,7 @@ const LogScreen = () => {
 
   const handleSubmit = async () => {
     try {
-      const response = await fetch('http://10.104.238.249:8000/log', {
+      const response = await fetch('http://10.104.238.249:8000/log', { // change line based on wifi connection (IP changes)
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -38,7 +38,7 @@ const LogScreen = () => {
       });
 
       const data = await response.json();
-      Alert.alert('✅ Log Submitted', `Total logs: ${data.total_logs}`);
+      Alert.alert('✅ Log Submitted', `Total logs: ${data.total_logs}`); // succesfull log submission
     } catch (error) {
       Alert.alert('Error', 'Failed to submit log.');
       console.error(error);

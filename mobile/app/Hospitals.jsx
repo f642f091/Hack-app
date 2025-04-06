@@ -3,6 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import PinDetailsModal from '../components/PinDetailsModal';
 
+// harcode LMH hospital
 const hospitalPins = [
   {
     name: 'LMH Health',

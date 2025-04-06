@@ -6,6 +6,7 @@ LogBox.ignoreLogs([
   'Support for defaultProps will be removed from function components', // suppress specific warning
 ]);
 
+// home page
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -24,7 +25,7 @@ export default function HomeScreen() {
 
       <Pressable
         style={[styles.button, styles.secondaryButton]}
-        onPress={() => router.push('DashboardScreen')}
+        onPress={() => router.push('DashboardScreen')} // takes user to Dashboard 
       >
         <Text style={styles.buttonText}>📊 View Dashboard</Text>
       </Pressable>

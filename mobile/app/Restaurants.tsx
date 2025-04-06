@@ -3,6 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import PinDetailsModal from '../components/PinDetailsModal';
 
+// hardcode a pin to a healthy restaurant
 const restaurantPins = [
   {
     name: 'Noodles & Company',

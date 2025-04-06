@@ -34,6 +34,7 @@ const ProfileScreen = () => {
         <td>${log.notes}</td>
       </tr>`).join('');
 
+    // return pdf 
     return `
       <html>
         <head>
@@ -85,10 +86,10 @@ const ProfileScreen = () => {
 
       <View style={styles.profileSection}>
         <Image
-          source={require('../../assets/images/gut_happy.png')}
+          source={require('../../assets/images/gut_happy.png')} // place holder profile picture
           style={styles.avatar}
         />
-        <Text style={styles.name}>John Doe</Text>
+        <Text style={styles.name}>John Doe</Text>  
         <Text style={styles.username}>@gutfeeling</Text>
       </View>
 

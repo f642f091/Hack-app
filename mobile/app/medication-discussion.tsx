@@ -11,6 +11,7 @@ import {
   Keyboard,
 } from 'react-native';
 
+// hard come user comments
 const initialMessages = [
   { id: '1', name: 'Alice K.', initials: 'AK', message: 'Anyone here on biologics? How are the side effects?' },
   { id: '2', name: 'David P.', initials: 'DP', message: "I started Stelara 3 months ago and it's helped a lot." },

@@ -5,6 +5,7 @@ import { useRouter } from 'expo-router';
 const CommunityScreen = () => {
   const router = useRouter();
 
+  // boxes with routes on Community tab
   const topics = [
     { name: 'Diet Tips', route: '/diet-tips', color: '#4ade80' },
     { name: 'Newly Diagnosed', route: '/newly-diagnosed', color: '#38bdf8' },

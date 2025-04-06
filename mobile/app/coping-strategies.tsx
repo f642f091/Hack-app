@@ -11,6 +11,7 @@ import {
   ScrollView,
 } from 'react-native';
 
+// hardcode user posts
 export default function CopingStrategiesScreen() {
   const [messages, setMessages] = useState([
     { id: 1, name: 'Marcel Hernandez', text: 'Working out helps a lot.', time: '9 days ago' },

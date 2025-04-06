@@ -11,6 +11,8 @@ import {
   Keyboard,
 } from 'react-native';
 
+
+// hardcode user posts
 export default function DietTipsScreen() {
   const [messages, setMessages] = useState([
     { id: 1, name: 'Alyssa P.', text: 'Probiotics and yogurt really help me stay regular.', time: '8 days ago' },
