@@ -1,4 +1,0 @@
-To Start postgresql: sudo -u postgres psql
-To open the database: psql -U nemeleks -d hackku25
-
-
