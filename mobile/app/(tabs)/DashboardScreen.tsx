@@ -56,13 +56,13 @@ const DashboardScreen = () => {
   let mascotImage = require('../../assets/images/gut_sad.png');
   let mascotMessage = "I'm not feeling great... let's log some symptoms!";
 
-  if (totalLogs >= 10) {
+  if (totalLogs >= 6) {
     mascotImage = require('../../assets/images/gut_zen.png');
     mascotMessage = "You've achieved gut peace 🧘 Keep up the amazing work!";
-  } else if (totalLogs >= 7) {
+  } else if (totalLogs >= 4) {
     mascotImage = require('../../assets/images/gut_happy.png');
     mascotMessage = "You're doing great! Just a few more logs for full zen 🙌";
-  } else if (totalLogs >= 4) {
+  } else if (totalLogs >= 2) {
     mascotImage = require('../../assets/images/gut_neutral.png');
     mascotMessage = "We're getting there—keep logging to improve your gut health!";
   }
