@@ -1,50 +1,117 @@
-# Welcome to your Expo app 👋
+# 🏥 IBD Tracker
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A mobile app built with [Expo](https://expo.dev), [React Native](https://reactnative.dev), and [FastAPI](https://fastapi.tiangolo.com/) to help people with Inflammatory Bowel Disease (IBD) track symptoms, monitor trends, and export weekly reports to share with their healthcare providers.
 
-## Get started
+---
 
-1. Install dependencies
+## 🚀 Get Started
 
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-    npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+### 1. Clone the repository
 
 ```bash
-npm run reset-project
+git clone https://github.com/your-username/ibd-tracker.git
+cd ibd-tracker
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### 2. Install dependencies
 
-## Learn more
+```bash
+cd mobile
+npm install
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+### 3. Start the Expo app
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+```bash
+npx expo start
+```
 
-## Join the community
+Open it in:
 
-Join our community of developers creating universal apps.
+- [Expo Go](https://expo.dev/go)
+- Android emulator
+- iOS simulator
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+---
+
+## 🤪 Backend Setup (FastAPI)
+
+Ensure FastAPI and uvicorn are installed.
+
+```bash
+cd server
+uvicorn main:app --reload
+```
+
+> Backend runs at `http://localhost:8000` (or your LAN IP if using device).
+
+---
+
+## ✨ Features
+
+- ✅ Log daily symptoms (pain, nausea, fatigue, stress, etc.)
+- 📊 View progress on a dynamic dashboard
+- 💬 Community discussions: diet, coping, medication
+- �� Friendly mascot responds to your log consistency
+- 🗓️ Medication tracker with calendar check-ins
+- 🗙️ Map of nearby IBD-friendly restaurants and clinics
+- 📄 Export or preview weekly symptom report as a PDF
+
+---
+
+## 🛄 PDF Report
+
+From the Profile screen, users can:
+- **Preview** the current report
+- **Export** and **share** the PDF
+- Report updates every 7 logs
+
+---
+
+## 💠 Structure
+
+```
+/mobile       ← Frontend (Expo)
+  /app
+  /components
+  /assets
+/server       ← Backend (FastAPI)
+  main.py
+```
+
+---
+
+## 📸 Screenshots
+
+_You can include screenshots of:_
+
+- 📋 Log screen  
+- 📊 Dashboard charts  
+- 📄 PDF report preview  
+- 💬 Community forums  
+- 💊 Medication tracker  
+- 🗙️ Clinic/restaurant map
+
+---
+
+## 👨‍💻 Authors
+
+- **Fabrizio Falcon**  
+- **Sam Kelemen**
+
+Built with ❤️ during a hackathon focused on real-world impact for chronic illness management.
+
+---
+
+## 🧠 Learn More
+
+- [Expo Docs](https://docs.expo.dev)
+- [React Native Maps](https://github.com/react-native-maps/react-native-maps)
+- [react-native-calendars](https://github.com/wix/react-native-calendars)
+- [FastAPI](https://fastapi.tiangolo.com)
+
+---
+
+## 📄 License
+
+MIT © 2025

@@ -1,30 +1,46 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, Button, Alert, ScrollView } from 'react-native';
+import React, { useState, useCallback } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  Button,
+  Alert,
+  ScrollView,
+} from 'react-native';
 import { shareAsync } from 'expo-sharing';
 import * as Print from 'expo-print';
+import { useFocusEffect } from '@react-navigation/native';
 
 const ProfileScreen = () => {
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetch('http://10.104.238.249:8000/summary')
-      .then((res) => res.json())
-      .then((data) => {
-        setLogs(data.logs || []);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error('Error fetching summary:', err);
-        setLoading(false);
-      });
-  }, []);
+  // Refresh logs every time the screen is focused
+  useFocusEffect(
+    useCallback(() => {
+      setLoading(true);
+      fetch('http://10.104.238.249:8000/summary')
+        .then((res) => res.json())
+        .then((data) => {
+          setLogs(data.logs || []);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.error('Error fetching summary:', err);
+          setLoading(false);
+        });
+    }, [])
+  );
 
   const totalLogs = logs.length;
-  const avgPain = logs.reduce((sum, log) => sum + (log.pain || 0), 0) / (totalLogs || 1);
+  const avgPain =
+    logs.reduce((sum, log) => sum + (log.pain || 0), 0) / (totalLogs || 1);
 
   const generateHtml = () => {
-    const rows = logs.map((log, i) => `
+    const rows = logs
+      .map(
+        (log, i) => `
       <tr>
         <td>${i + 1}</td>
         <td>${log.pain}</td>
@@ -32,9 +48,10 @@ const ProfileScreen = () => {
         <td>${log.fatigue}</td>
         <td>${log.diarrhea}</td>
         <td>${log.notes}</td>
-      </tr>`).join('');
+      </tr>`
+      )
+      .join('');
 
-    // return pdf 
     return `
       <html>
         <head>
@@ -86,10 +103,10 @@ const ProfileScreen = () => {
 
       <View style={styles.profileSection}>
         <Image
-          source={require('../../assets/images/gut_happy.png')} // place holder profile picture
+          source={require('../../assets/images/gut_happy.png')}
           style={styles.avatar}
         />
-        <Text style={styles.name}>John Doe</Text>  
+        <Text style={styles.name}>John Doe</Text>
         <Text style={styles.username}>@gutfeeling</Text>
       </View>
 
@@ -110,14 +127,23 @@ const ProfileScreen = () => {
 
       <View style={styles.bioBox}>
         <Text style={styles.bioText}>
-          "I’ve been tracking my symptoms for 3 weeks now and I feel more in control of my condition every day."
+          "I’ve been tracking my symptoms for 3 weeks now and I feel more in
+          control of my condition every day."
         </Text>
       </View>
 
       <View style={{ marginTop: 24 }}>
-        <Button title="📄 Preview PDF Report" onPress={handlePreview} color="#3b82f6" />
+        <Button
+          title="📄 Preview PDF Report"
+          onPress={handlePreview}
+          color="#3b82f6"
+        />
         <View style={{ height: 12 }} />
-        <Button title="📁 Export PDF Report" onPress={handleExport} color="#22c55e" />
+        <Button
+          title="📁 Export PDF Report"
+          onPress={handleExport}
+          color="#22c55e"
+        />
       </View>
     </ScrollView>
   );
