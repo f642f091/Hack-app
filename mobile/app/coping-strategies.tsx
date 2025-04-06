@@ -1,5 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
+  Keyboard,
+  ScrollView,
+} from 'react-native';
 
 export default function CopingStrategiesScreen() {
   const [messages, setMessages] = useState([
@@ -29,50 +39,66 @@ export default function CopingStrategiesScreen() {
     scrollViewRef.current?.scrollToEnd({ animated: true });
   }, [messages]);
 
+  useEffect(() => {
+    const showSub = Keyboard.addListener('keyboardDidShow', () =>
+      setTimeout(() => scrollViewRef.current?.scrollToEnd({ animated: true }), 100)
+    );
+    return () => showSub.remove();
+  }, []);
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Coping Strategies</Text>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
+    >
+      <View style={styles.container}>
+        <Text style={styles.title}>Coping Strategies</Text>
 
-      <ScrollView
-        ref={scrollViewRef}
-        style={styles.messagesContainer}
-        contentContainerStyle={{ paddingBottom: 80 }}
-        showsVerticalScrollIndicator={false}
-      >
-        {messages.map((msg) => (
-          <View key={msg.id} style={styles.messageCard}>
-            <View style={styles.avatar}>
-              <Text style={styles.avatarText}>
-                {msg.name
-                  .split(' ')
-                  .map((n) => n[0])
-                  .join('')
-                  .slice(0, 2)
-                  .toUpperCase()}
-              </Text>
+        <ScrollView
+          ref={scrollViewRef}
+          style={styles.messagesContainer}
+          contentContainerStyle={{ paddingBottom: 100 }}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
+          {messages.map((msg) => (
+            <View key={msg.id} style={styles.messageCard}>
+              <View style={styles.avatar}>
+                <Text style={styles.avatarText}>
+                  {msg.name
+                    .split(' ')
+                    .map((n) => n[0])
+                    .join('')
+                    .slice(0, 2)
+                    .toUpperCase()}
+                </Text>
+              </View>
+              <View style={styles.messageContent}>
+                <Text style={styles.messageName}>{msg.name}</Text>
+                <Text style={styles.messageText}>{msg.text}</Text>
+                <Text style={styles.messageTime}>{msg.time}</Text>
+              </View>
             </View>
-            <View style={styles.messageContent}>
-              <Text style={styles.messageName}>{msg.name}</Text>
-              <Text style={styles.messageText}>{msg.text}</Text>
-              <Text style={styles.messageTime}>{msg.time}</Text>
-            </View>
-          </View>
-        ))}
-      </ScrollView>
+          ))}
+        </ScrollView>
 
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.textInput}
-          placeholder="Write a post..."
-          placeholderTextColor="#ccc"
-          value={newMessage}
-          onChangeText={setNewMessage}
-        />
-        <TouchableOpacity style={styles.sendButton} onPress={handleSend}>
-          <Text style={styles.sendButtonText}>Send</Text>
-        </TouchableOpacity>
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.textInput}
+            placeholder="Write a post..."
+            placeholderTextColor="#ccc"
+            value={newMessage}
+            onChangeText={setNewMessage}
+            onSubmitEditing={handleSend}
+            returnKeyType="send"
+          />
+          <TouchableOpacity style={styles.sendButton} onPress={handleSend}>
+            <Text style={styles.sendButtonText}>Send</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -130,28 +156,31 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   inputContainer: {
-    position: 'absolute',
-    bottom: 16,
-    left: 16,
-    right: 16,
     flexDirection: 'row',
-    backgroundColor: '#1e293b',
-    borderRadius: 10,
     alignItems: 'center',
     paddingHorizontal: 12,
     paddingVertical: 8,
+    backgroundColor: '#1e293b',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
   },
   textInput: {
     flex: 1,
     color: 'white',
     fontSize: 16,
+    padding: 10,
+    borderColor: '#334155',
+    borderWidth: 1,
+    borderRadius: 8,
+    marginRight: 10,
   },
   sendButton: {
     backgroundColor: '#22c55e',
-    paddingVertical: 6,
-    paddingHorizontal: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
     borderRadius: 8,
-    marginLeft: 8,
   },
   sendButtonText: {
     color: 'white',
