@@ -70,6 +70,15 @@ const ProfileScreen = () => {
     }
   };
 
+  const handlePreview = async () => {
+    try {
+      const html = generateHtml();
+      await Print.printAsync({ html });
+    } catch (error) {
+      console.warn('Preview failed:', error);
+    }
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>My Profile</Text>
@@ -85,7 +94,7 @@ const ProfileScreen = () => {
 
       <View style={styles.statsSection}>
         <View style={styles.statBox}>
-          <Text style={styles.statNumber}>18</Text>
+          <Text style={styles.statNumber}>{logs.length}</Text>
           <Text style={styles.statLabel}>Entries Made</Text>
         </View>
         <View style={styles.statBox}>
@@ -93,7 +102,7 @@ const ProfileScreen = () => {
           <Text style={styles.statLabel}>Worst Symptom</Text>
         </View>
         <View style={styles.statBox}>
-          <Text style={styles.statNumber}>4.3</Text>
+          <Text style={styles.statNumber}>{avgPain.toFixed(1)}</Text>
           <Text style={styles.statLabel}>Avg. Symptom Score</Text>
         </View>
       </View>
@@ -105,7 +114,9 @@ const ProfileScreen = () => {
       </View>
 
       <View style={{ marginTop: 24 }}>
-        <Button title="📄 Export PDF Report" onPress={handleExport} color="#22c55e" />
+        <Button title="📄 Preview PDF Report" onPress={handlePreview} color="#3b82f6" />
+        <View style={{ height: 12 }} />
+        <Button title="📁 Export PDF Report" onPress={handleExport} color="#22c55e" />
       </View>
     </ScrollView>
   );
