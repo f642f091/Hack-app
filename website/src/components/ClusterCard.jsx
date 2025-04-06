@@ -2,18 +2,19 @@ import React from "react";
 import styled from "styled-components";
 
 const Card = styled.div`
-  background-color: #fff;
+  background-color: #ffffff;
   border-radius: 20px;
   padding: 24px;
   text-align: left;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-  border: 1px solid #fca5a5;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  border: 2px solid #fecaca;
+  transition: all 0.3s ease;
 `;
 
 const Heading = styled.h2`
   font-size: 1.5rem;
-  color: #ef4444;
-  margin-bottom: 12px;
+  color: #dc2626;
+  margin-bottom: 10px;
 `;
 
 const ClusterInfo = styled.p`
@@ -42,7 +43,7 @@ const Td = styled.td`
 
 const ClusterCard = ({ cluster }) => (
   <Card>
-    <Heading>Cluster {cluster.id}</Heading>
+    <Heading>{cluster.id}</Heading>
     <ClusterInfo>Cluster Size: {cluster.size}</ClusterInfo>
     <Table>
       <thead>

@@ -10,28 +10,29 @@ const TabContainer = styled.div`
 `;
 
 const TabButton = styled.button`
-  padding: 10px 16px;
+  padding: 10px 18px;
   border-radius: 999px;
   font-weight: 500;
   border: none;
   cursor: pointer;
-  background-color: ${({ active, color }) => (active ? color : "#eee")};
+  background-color: ${({ active, color }) => (active ? color : "#f3f4f6")};
   color: ${({ active }) => (active ? "#000" : "#555")};
   box-shadow: ${({ active }) =>
     active ? "0 4px 10px rgba(0,0,0,0.1)" : "none"};
-  transition: 0.2s all ease;
+  transition: 0.2s ease;
+  font-size: 1rem;
 
   &:hover {
-    opacity: 0.85;
+    opacity: 0.9;
   }
 `;
 
 const ClusterTabs = ({ activeTab, setActiveTab }) => {
   const tabs = [
-    { id: 1, label: "Cluster 1", color: "#fca5a5" },
-    { id: 2, label: "Cluster 2", color: "#fde68a" },
-    { id: 3, label: "Cluster 3", color: "#fdba74" },
-    { id: 4, label: "Cluster 4", color: "#86efac" },
+    { id: "Cluster A", label: "Cluster A", color: "#fecaca" },
+    { id: "Cluster B", label: "Cluster B", color: "#fef08a" },
+    { id: "Cluster C", label: "Cluster C", color: "#fdba74" },
+    { id: "Cluster D", label: "Cluster D", color: "#86efac" },
   ];
 
   return (
